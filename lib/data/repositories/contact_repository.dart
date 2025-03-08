@@ -12,13 +12,11 @@ class ContactRepository extends BaseRepository {
 
   Future<List<Map<String, dynamic>>> getRegisteredContacts() async {
     try {
-      //get device contacts with phone number
       final contacts = await FlutterContacts.getContacts(
         withProperties: true,
         withPhoto: true,
       );
 
-      //extract phone numbers and normalize them
       final phoneNumbers = contacts
           .where((contact) => contact.phones.isNotEmpty)
           .map((contact) => {
@@ -29,15 +27,11 @@ class ContactRepository extends BaseRepository {
               })
           .toList();
 
-      //get all users from firestore
-
       final usersSnapshot = await firestore.collection("users").get();
 
       final registeredUsers = usersSnapshot.docs
           .map((doc) => UserModel.fromFirestore(doc))
           .toList();
-
-      // match contacts with registered users
 
       final matchedContacts = phoneNumbers.where((contact) {
         final phoneNumber = contact["phoneNumber"];
@@ -48,14 +42,13 @@ class ContactRepository extends BaseRepository {
             .firstWhere((user) => user.phoneNumber == contact["phoneNumber"]);
         return {
           'id': registeredUser.uid,
-          'name': contact['name'],
-          'phoneNumber': contact['phoneNumber'],
+          'name': contact["name"],
+          'phoneNumber': contact["phoneNumber"],
         };
       }).toList();
-
       return matchedContacts;
     } catch (e) {
-      print("error getting registered users");
+      print("Error getting registered users");
       return [];
     }
   }
