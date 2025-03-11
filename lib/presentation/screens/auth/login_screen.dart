@@ -24,8 +24,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
-  bool _isPasswordVisible = false;
 
+  bool _isPasswordVisible = false;
   @override
   void dispose() {
     emailController.dispose();
@@ -46,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
+  // Password validation
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a password';
@@ -67,12 +68,14 @@ class _LoginScreenState extends State<LoginScreen> {
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString()),
+            content: Text(
+              e.toString(),
+            ),
           ),
         );
       }
     } else {
-      print("Form validation failed");
+      print("form validation failed");
     }
   }
 
@@ -82,9 +85,9 @@ class _LoginScreenState extends State<LoginScreen> {
         bloc: getIt<AuthCubit>(),
         listener: (context, state) {
           if (state.status == AuthStatus.authenticated) {
-            // Navigator.pushReplacement(
-            //     context, MaterialPageRoute(builder: (context) => HomeScreen()));
-            getIt<AppRouter>().pushAndRemoveUntil(HomeScreen());
+            getIt<AppRouter>().pushAndRemoveUntil(
+              const HomeScreen(),
+            );
           } else if (state.status == AuthStatus.error && state.error != null) {
             UiUtils.showSnackBar(context, message: state.error!);
           }
@@ -99,35 +102,39 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 30,
                         ),
                         Text(
-                          "Welcome back",
+                          "Welcome Back",
                           style: Theme.of(context)
                               .textTheme
                               .headlineMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
-                        Text("Sign in to continue",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(color: Colors.grey)),
-                        SizedBox(
+                        Text(
+                          "Sign in to continue",
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.grey,
+                                  ),
+                        ),
+                        const SizedBox(
                           height: 30,
                         ),
                         CustomTextField(
                           controller: emailController,
+                          hintText: "Email",
                           focusNode: _emailFocus,
                           validator: _validateEmail,
-                          hintText: "Email",
-                          prefixIcon: Icon(Icons.email_outlined),
+                          prefixIcon: const Icon(
+                            Icons.email_outlined,
+                          ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 16,
                         ),
                         CustomTextField(
@@ -135,61 +142,72 @@ class _LoginScreenState extends State<LoginScreen> {
                           focusNode: _passwordFocus,
                           validator: _validatePassword,
                           hintText: "Password",
+                          prefixIcon: const Icon(Icons.lock_outline),
                           obscureText: !_isPasswordVisible,
-                          prefixIcon: Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  _isPasswordVisible = !_isPasswordVisible;
-                                });
-                              },
-                              icon: Icon(_isPasswordVisible
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                            icon: Icon(
+                              _isPasswordVisible
                                   ? Icons.visibility_off
-                                  : Icons.visibility)),
+                                  : Icons.visibility,
+                            ),
+                          ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 30,
                         ),
                         CustomButton(
                           onPressed: handleSignIn,
                           text: 'Login',
                           child: state.status == AuthStatus.loading
-                              ? CircularProgressIndicator(
+                              ? const CircularProgressIndicator(
                                   color: Colors.white,
                                 )
-                              : Text(
+                              : const Text(
                                   "Login",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
                                 ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         Center(
                           child: RichText(
-                              text: TextSpan(
-                                  text: "Don't have an account? ",
-                                  style: TextStyle(color: Colors.grey[600]),
-                                  children: [
+                            text: TextSpan(
+                              text: "Don't have an account?  ",
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                              ),
+                              children: [
                                 TextSpan(
-                                    text: "SignUp",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.copyWith(
+                                  text: "Sign up",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
                                           color: Theme.of(context).primaryColor,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        // Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //         builder: (context) =>
-                                        //             SignupScreen()));
-                                        getIt<AppRouter>().push(SignupScreen());
-                                      })
-                              ])),
+                                          fontWeight: FontWeight.bold),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) => const SignupScreen(),
+                                      //   ),
+                                      // );
+                                      getIt<AppRouter>()
+                                          .push(const SignupScreen());
+                                    },
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),

@@ -25,6 +25,7 @@ class UserModel {
     this.blockedUsers = const [],
   })  : lastSeen = lastSeen ?? Timestamp.now(),
         createdAt = createdAt ?? Timestamp.now();
+
   UserModel copyWith({
     String? uid,
     String? username,
